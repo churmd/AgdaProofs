@@ -63,3 +63,24 @@ module Logic where
 
   not2 : {A B : Set} → A → ¬ A → B
   not2 a na = falsity (na a)
+
+  -- Laws of thought
+  postulate LEM : {A : Set} → A ∨ ¬ A
+  postulate DNE : {A : Set} → ¬ (¬ A) → A
+
+  -- De Morgan laws
+  DeMorgan1 : {P Q : Set} → ¬ (P ∨ Q) → (¬ P) ∧ (¬ Q)
+  DeMorgan1 f = and3 (λ p → f (inl p)) (λ q → f (inr q))
+
+  DeMorgan2 : {P Q : Set} → (¬ P) ∧ (¬ Q) → ¬ (P ∨ Q)
+  DeMorgan2 (np , nq) (inl x) = np x
+  DeMorgan2 (np , nq) (inr x) = nq x
+
+  DeMorgan3 : {P Q : Set} → ¬ (P ∧ Q) → (¬ P) ∨ (¬ Q)
+  DeMorgan3 f with LEM
+  DeMorgan3 f | inl p = inr (λ q → f (p , q))
+  DeMorgan3 f | inr np = inl np
+
+  DeMorgan4 : {P Q : Set} → (¬ P) ∨ (¬ Q) → ¬ (P ∧ Q)
+  DeMorgan4 (inl x) (p , q) = x p
+  DeMorgan4 (inr x) (p , q) = x q
